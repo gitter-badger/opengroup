@@ -12,9 +12,9 @@ var PeerConnection = function (uniquePeerId) {
         'iceServers': [{ 'url': 'stun:23.21.150.121' }]
     };
 
-    this.constraints = {
+    this.constraints = {};
 
-    };
+    this.status = 'constructed';
 
     var that = this;
 
@@ -22,22 +22,42 @@ var PeerConnection = function (uniquePeerId) {
 
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
+    this.webrtcConnection.onicecandidate = function (e) {
+        if (e.candidate == null) {
+            console.log(that.getId());
+        }
+    };
+
     this.getId = function () {
         return this.id;
     };
 
-    this.getOffer = function () {
-        this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
-
-        return this.webrtcConnection.createOffer()
-            .then(
-                offer => that.webrtcConnection.setLocalDescription(offer))
-            .then(function () {
-                return that.webrtcConnection.localDescription.toJSON()
-            })
+    this.getStatus = function () {
+        return this.status;
     };
 
-    this.answerOffer = function (offer) {
+    this.getOffer = function () {
+        this.status = 'creating-offer';
+        this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
 
+        return this.webrtcConnection.createOffer().then(
+            offer => that.webrtcConnection.setLocalDescription(offer))
+        .then(function () {
+            that.status = 'created-offer';
+            return that.webrtcConnection.localDescription.toJSON()
+        })
+    };
+
+    this.getAnswer = function (offer) {
+        this.status = 'recieved-offer';
+        this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
+        this.offer = new RTCSessionDescription(offer);
+
+        this.webrtcConnection.setRemoteDescription(this.offer);
+        return this.webrtcConnection.createAnswer().then(function (answer) {
+            that.status = 'accepted-offer';
+            that.answer = answer;
+            return answer
+        })
     }
 };
