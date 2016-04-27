@@ -23,8 +23,8 @@ var PeerConnection = function (uniquePeerId) {
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
     this.webrtcConnection.onicecandidate = function (e) {
+        console.log(that.getId());
         if (e.candidate == null) {
-            console.log(that.getId());
         }
     };
 
@@ -39,6 +39,10 @@ var PeerConnection = function (uniquePeerId) {
     this.getOffer = function () {
         this.status = 'creating-offer';
         this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
+        this.dataChannel.onopen = this.onDataChannelOpen;
+        this.dataChannel.onmessage = this.onDataChannelMessage;
+        this.dataChannel.onclose = this.onDataChannelClose;
+        this.dataChannel.onerror = this.onDataChannelError;
 
         return this.webrtcConnection.createOffer().then(
             offer => that.webrtcConnection.setLocalDescription(offer))
@@ -51,13 +55,46 @@ var PeerConnection = function (uniquePeerId) {
     this.getAnswer = function (offer) {
         this.status = 'recieved-offer';
         this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
+
+        this.webrtcConnection.ondatachannel = function (event) {
+            console.log('datachannel')
+
+            that.dataChannel = event.channel;
+            that.dataChannel.onmessage = that.onDataChannelMessage;
+            that.dataChannel.onopen = that.onDataChannelOpen;
+            that.dataChannel.onclose = that.onDataChannelClose;
+        };
+
         this.offer = new RTCSessionDescription(offer);
 
         this.webrtcConnection.setRemoteDescription(this.offer);
         return this.webrtcConnection.createAnswer().then(function (answer) {
+            that.webrtcConnection.setLocalDescription(answer)
             that.status = 'accepted-offer';
             that.answer = answer;
-            return answer
+            return answer;
         })
+    }
+
+    this.acceptAnswer = function(answer) {
+        this.answer = new RTCSessionDescription(answer);
+        that.webrtcConnection.setRemoteDescription(answer);
+    }
+
+
+    this.onDataChannelOpen = function(e) {
+        console.info('Datachannel connected', e);
+    }
+
+    this.onDataChannelMessage = function(e) {
+        console.info('message:', e.data);
+    }
+
+    this.onDataChannelClose = function(e) {
+        console.log('data channel close', e);
+    }
+
+    this.onDataChannelError = function (err) {
+        console.log(err)
     }
 };

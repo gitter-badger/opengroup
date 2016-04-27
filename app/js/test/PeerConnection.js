@@ -35,7 +35,9 @@ describe('peerConnection', function () {
                 expect(peerConnection2.getStatus()).to.be('accepted-offer');
                 expect(peerConnection2.answer.type).to.be('answer');
 
-                console.log(answer)
+                console.log(peerConnection1)
+
+                peerConnection1.acceptAnswer(answer);
 
                 done();
             });

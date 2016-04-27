@@ -12,3 +12,7 @@ var OpenGroup = function () {
 
     this.messageBroadcast = function () {}
 };
+
+window.errorCatcher = function (e) {
+    console.log('error:', e)
+}
