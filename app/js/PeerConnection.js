@@ -4,27 +4,19 @@
 */
 
 var PeerConnection = function (uniquePeerId) {
-    if (!uniquePeerId) {
-        throw "A peerConnection needs an uniquePeerId";
-    }
-
-    this.config = {
-        'iceServers': [{ 'url': 'stun:23.21.150.121' }]
-    };
-
-    this.constraints = {};
-
-    this.status = 'constructed';
-
     var that = this;
-
+    if (!uniquePeerId) { throw "A peerConnection needs an uniquePeerId"; }
+    this.config = { 'iceServers': [{ 'url': 'stun:23.21.150.121' }] };
+    this.constraints = {};
     this.id = uniquePeerId;
 
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
     this.webrtcConnection.onicecandidate = function (e) {
-        console.log(that.getId());
         if (e.candidate == null) {
+            if (typeof that.onOfferIsComplete == 'function') {
+                that.onOfferIsComplete(that.webrtcConnection.localDescription)
+            }
         }
     };
 
@@ -32,33 +24,22 @@ var PeerConnection = function (uniquePeerId) {
         return this.id;
     };
 
-    this.getStatus = function () {
-        return this.status;
-    };
-
     this.getOffer = function () {
-        this.status = 'creating-offer';
+        // The WebRTC initiator creates a datachannel which gets sent over the line.
         this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
         this.dataChannel.onopen = this.onDataChannelOpen;
         this.dataChannel.onmessage = this.onDataChannelMessage;
         this.dataChannel.onclose = this.onDataChannelClose;
         this.dataChannel.onerror = this.onDataChannelError;
 
-        return this.webrtcConnection.createOffer().then(
-            offer => that.webrtcConnection.setLocalDescription(offer))
-        .then(function () {
-            that.status = 'created-offer';
-            return that.webrtcConnection.localDescription.toJSON()
-        })
+        return this.webrtcConnection.createOffer().then(function (offer) {
+          return that.webrtcConnection.setLocalDescription(offer);
+        }).catch(errorCatcher);
     };
 
     this.getAnswer = function (offer) {
-        this.status = 'recieved-offer';
-        this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
 
         this.webrtcConnection.ondatachannel = function (event) {
-            console.log('datachannel')
-
             that.dataChannel = event.channel;
             that.dataChannel.onmessage = that.onDataChannelMessage;
             that.dataChannel.onopen = that.onDataChannelOpen;
@@ -70,17 +51,15 @@ var PeerConnection = function (uniquePeerId) {
         this.webrtcConnection.setRemoteDescription(this.offer);
         return this.webrtcConnection.createAnswer().then(function (answer) {
             that.webrtcConnection.setLocalDescription(answer)
-            that.status = 'accepted-offer';
             that.answer = answer;
             return answer;
-        })
+        }).catch(errorCatcher)
     }
 
     this.acceptAnswer = function(answer) {
         this.answer = new RTCSessionDescription(answer);
-        that.webrtcConnection.setRemoteDescription(answer);
+        that.webrtcConnection.setRemoteDescription(that.answer)
     }
-
 
     this.onDataChannelOpen = function(e) {
         console.info('Datachannel connected', e);
