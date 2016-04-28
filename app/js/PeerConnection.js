@@ -51,26 +51,30 @@ var PeerConnection = function (uniquePeerId) {
         return this.webrtcConnection.createAnswer().then(function (answer) {
             return that.webrtcConnection.setLocalDescription(answer);
         }).catch(errorCatcher)
-    }
+    };
 
     this.acceptAnswer = function(answer) {
         this.answer = new RTCSessionDescription(answer);
-        that.webrtcConnection.setRemoteDescription(that.answer)
-    }
+        return that.webrtcConnection.setRemoteDescription(that.answer);
+    };
 
     this.onDataChannelOpen = function(e) {
         console.info('Datachannel connected', e);
-    }
+
+        if (typeof that.onConnected == 'function') {
+            that.onConnected();
+        }
+    };
 
     this.onDataChannelMessage = function(e) {
         console.info('message:', e.data);
-    }
+    };
 
     this.onDataChannelClose = function(e) {
         console.log('data channel close', e);
-    }
+    };
 
     this.onDataChannelError = function (err) {
-        console.log(err)
-    }
+        console.log(err);
+    };
 };

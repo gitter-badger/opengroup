@@ -33,7 +33,7 @@ describe('peerConnection', function () {
         peerConnection1.onSdpIsComplete = function (offer) {
             peerConnection1Offer = offer;
             var offerSdp = peerConnection1Offer.toJSON().sdp;
-            expect(offerSdp).to.contain('candidate:0');
+            expect(offerSdp).to.contain('candidate:');
             done();
         };
 
@@ -46,7 +46,7 @@ describe('peerConnection', function () {
         peerConnection2.onSdpIsComplete = function (answer) {
             peerConnection2Answer = answer;
             var answerSdp = peerConnection2Answer.toJSON().sdp;
-            expect(answerSdp).to.contain('candidate:0');
+            expect(answerSdp).to.contain('candidate:');
             done();
         };
 
@@ -54,6 +54,10 @@ describe('peerConnection', function () {
     });
 
     it('should successfully connect to another peer', function (done) {
+        peerConnection1.onConnected = function () {
+          done();
+        };
+
         peerConnection1.acceptAnswer(peerConnection2Answer);
     });
 });
