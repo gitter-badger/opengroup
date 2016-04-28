@@ -21,6 +21,14 @@ describe('peerConnection', function () {
         expect(peerConnection1).to.be.an('object');
     });
 
+    it('should throw an error if the uniqueId is not given', function () {
+        var addExistingpeerConnectionWithoutId = function () {
+            myOpenGroup1.peerConnectionAdd()
+        };
+
+        expect(addExistingpeerConnectionWithoutId).to.throwException("A peerConnection needs an uniquePeerId");
+    });
+
     it('should throw an error if the peerConnection already exists', function () {
         var addExistingpeerConnection = function () {
             myOpenGroup1.peerConnectionAdd('henk@jansen.com')
@@ -59,5 +67,17 @@ describe('peerConnection', function () {
         };
 
         peerConnection1.acceptAnswer(peerConnection2Answer);
+    });
+});
+
+describe('openGroup', function () {
+    it('should successfully broadcast a message to another peer', function (done) {
+        myOpenGroup2.onBroadcastReceived = function (message, owner) {
+            expect(message).to.be('Yo Lorem ipsum');
+            expect(owner).to.be('opengroup.framework');
+            done();
+        };
+
+        myOpenGroup1.broadcast('Yo Lorem ipsum', 'opengroup.framework');
     });
 });

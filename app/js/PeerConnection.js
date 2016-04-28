@@ -3,12 +3,13 @@
    The unique ID is for now the mail address.
 */
 
-var PeerConnection = function (uniquePeerId) {
+var PeerConnection = function (uniquePeerId, openGroup) {
     var that = this;
     if (!uniquePeerId) { throw "A peerConnection needs an uniquePeerId"; }
     this.config = { 'iceServers': [{ 'url': 'stun:23.21.150.121' }] };
     this.constraints = {};
     this.id = uniquePeerId;
+    this.openGroup = openGroup;
 
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
@@ -58,6 +59,15 @@ var PeerConnection = function (uniquePeerId) {
         return that.webrtcConnection.setRemoteDescription(that.answer);
     };
 
+    this.sendMessage = function (message, owner) {
+        if (!message || !owner) { throw "A message needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
+
+        this.dataChannel.send(JSON.stringify({
+            message: message,
+            owner: owner
+        }));
+    };
+
     this.onDataChannelOpen = function(e) {
         console.info('Datachannel connected', e);
 
@@ -67,7 +77,9 @@ var PeerConnection = function (uniquePeerId) {
     };
 
     this.onDataChannelMessage = function(e) {
-        console.info('message:', e.data);
+        var data = JSON.parse(e.data);
+        if (!data.message || !data.owner) { throw "A message needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
+        that.openGroup.receiveMessage(data.message, data.owner);
     };
 
     this.onDataChannelClose = function(e) {
