@@ -14,8 +14,8 @@ var PeerConnection = function (uniquePeerId) {
 
     this.webrtcConnection.onicecandidate = function (e) {
         if (e.candidate == null) {
-            if (typeof that.onOfferIsComplete == 'function') {
-                that.onOfferIsComplete(that.webrtcConnection.localDescription)
+            if (typeof that.onSdpIsComplete == 'function') {
+                that.onSdpIsComplete(that.webrtcConnection.localDescription)
             }
         }
     };
@@ -38,7 +38,6 @@ var PeerConnection = function (uniquePeerId) {
     };
 
     this.getAnswer = function (offer) {
-
         this.webrtcConnection.ondatachannel = function (event) {
             that.dataChannel = event.channel;
             that.dataChannel.onmessage = that.onDataChannelMessage;
@@ -50,9 +49,7 @@ var PeerConnection = function (uniquePeerId) {
 
         this.webrtcConnection.setRemoteDescription(this.offer);
         return this.webrtcConnection.createAnswer().then(function (answer) {
-            that.webrtcConnection.setLocalDescription(answer)
-            that.answer = answer;
-            return answer;
+            return that.webrtcConnection.setLocalDescription(answer);
         }).catch(errorCatcher)
     }
 
