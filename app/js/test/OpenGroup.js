@@ -12,61 +12,51 @@ describe('openGroup', function () {
         expect(myOpenGroup1).to.be.an('object');
         expect(myOpenGroup1.peerConnectionAdd).to.be.an('function');
     });
-});
 
-describe('peerConnection', function () {
     it('should have a peerConnection after adding one', function () {
         peerConnection1 = myOpenGroup1.peerConnectionAdd('henk@jansen.com');
         expect(peerConnection1.getId()).to.be('henk@jansen.com');
         expect(peerConnection1).to.be.an('object');
     });
+});
 
+describe('peerConnection', function () {
     it('should throw an error if the uniqueId is not given', function () {
-        var addExistingpeerConnectionWithoutId = function () {
+        expect(function () {
             myOpenGroup1.peerConnectionAdd()
-        };
-
-        expect(addExistingpeerConnectionWithoutId).to.throwException("A peerConnection needs an uniquePeerId");
+        }).to.throwException("A peerConnection needs an uniquePeerId");
     });
 
     it('should throw an error if the peerConnection already exists', function () {
-        var addExistingpeerConnection = function () {
+        expect(function () {
             myOpenGroup1.peerConnectionAdd('henk@jansen.com')
-        };
-
-        expect(addExistingpeerConnection).to.throwException("Connection with henk@jansen.com already exists.");
+        }).to.throwException("Connection with henk@jansen.com already exists.");
     });
 
     it('should return an sdp offer with candidates', function (done) {
-        peerConnection1.onSdpIsComplete = function (offer) {
+        peerConnection1.getOffer(function (offer) {
             peerConnection1Offer = offer;
             var offerSdp = peerConnection1Offer.toJSON().sdp;
             expect(offerSdp).to.contain('candidate:');
             done();
-        };
-
-        peerConnection1.getOffer();
+        });
     });
 
     it('should create an sdp answer with candidates', function (done) {
         peerConnection2 = myOpenGroup2.peerConnectionAdd('john@exmaple.com');
 
-        peerConnection2.onSdpIsComplete = function (answer) {
+        peerConnection2.getAnswer(peerConnection1Offer, function (answer) {
             peerConnection2Answer = answer;
             var answerSdp = peerConnection2Answer.toJSON().sdp;
             expect(answerSdp).to.contain('candidate:');
             done();
-        };
-
-        peerConnection2.getAnswer(peerConnection1Offer);
+        });
     });
 
     it('should successfully connect to another peer', function (done) {
-        peerConnection1.onConnected = function () {
-          done();
-        };
-
-        peerConnection1.acceptAnswer(peerConnection2Answer);
+        peerConnection1.acceptAnswer(peerConnection2Answer, function () {
+            done();
+        });
     });
 });
 

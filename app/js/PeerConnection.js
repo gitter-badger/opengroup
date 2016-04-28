@@ -25,7 +25,9 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         return this.id;
     };
 
-    this.getOffer = function () {
+    this.getOffer = function (callback) {
+        if (typeof callback == 'function') { this.onSdpIsComplete = callback; }
+
         // The WebRTC initiator creates a datachannel which gets sent over the line.
         this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
         this.dataChannel.onopen = this.onDataChannelOpen;
@@ -38,7 +40,9 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }).catch(errorCatcher);
     };
 
-    this.getAnswer = function (offer) {
+    this.getAnswer = function (offer, callback) {
+        if (typeof callback == 'function') { this.onSdpIsComplete = callback; }
+
         this.webrtcConnection.ondatachannel = function (event) {
             that.dataChannel = event.channel;
             that.dataChannel.onmessage = that.onDataChannelMessage;
@@ -54,7 +58,8 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }).catch(errorCatcher)
     };
 
-    this.acceptAnswer = function(answer) {
+    this.acceptAnswer = function(answer, callback) {
+        if (typeof callback == 'function') { this.onConnected = callback; }
         this.answer = new RTCSessionDescription(answer);
         return that.webrtcConnection.setRemoteDescription(that.answer);
     };
