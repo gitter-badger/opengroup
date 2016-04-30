@@ -128,6 +128,7 @@ var PeerConnection = function (uniquePeerId, openGroup) {
      * @param e Event with the webRTC data.
      */
     this.onDataChannelOpen = function(e) {
+        console.log(that.getId())
         console.info('Datachannel connected', e);
 
         if (typeof that.onceConnected == 'function') {

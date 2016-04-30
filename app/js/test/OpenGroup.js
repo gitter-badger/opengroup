@@ -11,6 +11,10 @@ var myOpenGroup3 = new OpenGroup();
 var peerConnection3 = false;
 var peerConnection4 = false;
 
+var myOpenGroup4 = new OpenGroup();
+var peerConnection5 = false;
+var peerConnection6 = false;
+
 describe('openGroup', function () {
     it('should have an internet connection', function () {
         var online = navigator.onLine;
@@ -94,6 +98,17 @@ describe('openGroup', function () {
     });
 
     it('should automatically connect to the other peers', function (done) {
+        peerConnection5 = myOpenGroup4.peerConnectionAdd('lisa.bakker.com');
+        peerConnection6 = myOpenGroup1.peerConnectionAdd('john@example.com');
+
+        peerConnection5.getOffer(function (offer) {
+            peerConnection6.getAnswer(offer, function (answer) {
+                peerConnection5.acceptAnswer(answer, function () {
+                    done();
+                })
+            })
+        })
+
         done();
     });
 });
