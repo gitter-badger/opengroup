@@ -1,8 +1,10 @@
-/* A class to initiate or answer a WebRTC connection.
-   It may be unanswered, and may be connected.
-   The unique ID is for now the mail address.
-*/
-
+/**
+ * A peerConnection is an object to construct a p2p connection.
+ *
+ * @param uniquePeerId A unique identifier, something like john@doe.com.
+ * @param openGroup The openGroup this peerConnection belongs to.
+ * @constructor
+ */
 var PeerConnection = function (uniquePeerId, openGroup) {
     var that = this;
     if (!uniquePeerId) { throw "A peerConnection needs an uniquePeerId"; }
@@ -10,25 +12,46 @@ var PeerConnection = function (uniquePeerId, openGroup) {
     this.constraints = {};
     this.id = uniquePeerId;
     this.openGroup = openGroup;
+    this.signalingRole = false;
 
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
+    /**
+     * When candidates are added to the IDP.
+     * Interesting is the deletion of the onceSdpIsComplete.
+     * This makes the abstraction easy to use.
+     * Higher up you can simply use peer.getOffer(function (offer) {})
+     *
+     * @param e The event
+     */
     this.webrtcConnection.onicecandidate = function (e) {
         if (e.candidate == null) {
-            if (typeof that.onSdpIsComplete == 'function') {
-                that.onSdpIsComplete(that.webrtcConnection.localDescription)
+            if (typeof that.onceSdpIsComplete == 'function') {
+                that.onceSdpIsComplete(that.webrtcConnection.localDescription);
+                delete that.onceSdpIsComplete;
             }
         }
     };
 
+    /**
+     * @returns the ID of the peerConnection.
+     */
     this.getId = function () {
         return this.id;
     };
 
+    /**
+     * The first step of creating a connection between peers.
+     * It needs to be done at the initiator.
+     * The datachannel is created here and is sent over the line.
+     *
+     * @param callback A function that will run after a successful offer with candidates has been made.
+     * @returns IDP offer.
+     */
     this.getOffer = function (callback) {
-        if (typeof callback == 'function') { this.onSdpIsComplete = callback; }
+        this.signalingRole = 'initiator';
+        if (typeof callback == 'function') { this.onceSdpIsComplete = callback; }
 
-        // The WebRTC initiator creates a datachannel which gets sent over the line.
         this.dataChannel = this.webrtcConnection.createDataChannel('opengroup', {});
         this.dataChannel.onopen = this.onDataChannelOpen;
         this.dataChannel.onmessage = this.onDataChannelMessage;
@@ -40,8 +63,18 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }).catch(errorCatcher);
     };
 
+    /**
+     * The second step of creating a connection between peers.
+     * It needs to be done at the second peer.
+     * The datachannel is received here.
+     *
+     * @param offer The IDP offer from the getOffer function.
+     * @param callback A function that will run after a successful answer with candidates has been made.
+     * @returns IDP answer.
+     */
     this.getAnswer = function (offer, callback) {
-        if (typeof callback == 'function') { this.onSdpIsComplete = callback; }
+        this.signalingRole = 'answerer';
+        if (typeof callback == 'function') { this.onceSdpIsComplete = callback; }
 
         this.webrtcConnection.ondatachannel = function (event) {
             that.dataChannel = event.channel;
@@ -58,12 +91,27 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }).catch(errorCatcher)
     };
 
+    /**
+     * The third step of creating a connection between peers.
+     * It needs to be done at the initiator.
+     *
+     * @param answer The IDP answer
+     * @param callback A function that will run after the peers successfully connect.
+     * @returns The promise of setRemoteDescription.
+     */
     this.acceptAnswer = function(answer, callback) {
-        if (typeof callback == 'function') { this.onConnected = callback; }
+        if (typeof callback == 'function') { this.onceConnected = callback; }
         this.answer = new RTCSessionDescription(answer);
         return that.webrtcConnection.setRemoteDescription(that.answer);
     };
 
+    /**
+     * Send a message to the peer.
+     * This will mostly be called from the group to broadcast something to all peers.
+     *
+     * @param message The things you want to send over.
+     * @param owner The plugin or components that needs to react to this message in the receiving peer.
+     */
     this.sendMessage = function (message, owner) {
         if (!message || !owner) { throw "A message needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
 
@@ -73,18 +121,41 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }));
     };
 
+    /**
+     * The event callback when the webRTC datachannel is opened.
+     * This function starts the signaling of all the other connected peers to the newly connected peer.
+     *
+     * @param e Event with the webRTC data.
+     */
     this.onDataChannelOpen = function(e) {
         console.info('Datachannel connected', e);
 
-        if (typeof that.onConnected == 'function') {
-            that.onConnected();
+        if (typeof that.onceConnected == 'function') {
+            that.onceConnected();
+        }
+
+        if (that.signalingRole == 'initiator') {
+
+            Object.keys(that.openGroup.peerConnections).forEach(function(peerConnectionId) {
+                if (peerConnectionId != that.getId()) {
+                    that.openGroup.peerConnections[peerConnectionId].sendMessage({
+                        command: 'createOffer',
+                        parameters: [that.getId()]
+                    }, 'signaling')
+                }
+            });
         }
     };
 
+    /**
+     * The event callback when the webRTC datachannel receives a message.
+     * @param e Event with the webRTC data.
+     */
     this.onDataChannelMessage = function(e) {
         var data = JSON.parse(e.data);
         if (!data.message || !data.owner) { throw "A message needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
-        that.openGroup.receiveMessage(data.message, data.owner);
+
+        that.openGroup.receiveMessage(data.message, data.owner, that.getId());
     };
 
     this.onDataChannelClose = function(e) {
