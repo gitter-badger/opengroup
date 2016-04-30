@@ -115,10 +115,16 @@ var PeerConnection = function (uniquePeerId, openGroup) {
     this.sendMessage = function (message, owner) {
         if (!message || !owner) { throw "A message needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
 
-        this.dataChannel.send(JSON.stringify({
-            message: message,
-            owner: owner
-        }));
+        if (typeof this.dataChannel != 'undefined' && this.dataChannel.readyState == 'open') {
+            this.dataChannel.send(JSON.stringify({
+                message: message,
+                owner: owner
+            }));
+        }
+        else {
+            // TODO try to re initiate.
+            throw "Datachannel was not correctly set up";
+        }
     };
 
     /**
@@ -128,17 +134,19 @@ var PeerConnection = function (uniquePeerId, openGroup) {
      * @param e Event with the webRTC data.
      */
     this.onDataChannelOpen = function(e) {
-        console.log(that.getId())
         console.info('Datachannel connected', e);
 
         if (typeof that.onceConnected == 'function') {
             that.onceConnected();
+            delete that.onceConnected;
         }
 
         if (that.signalingRole == 'initiator') {
 
             Object.keys(that.openGroup.peerConnections).forEach(function(peerConnectionId) {
                 if (peerConnectionId != that.getId()) {
+
+                    // TODO the datachannel is not always ready, abstract the waiting process away.
                     that.openGroup.peerConnections[peerConnectionId].sendMessage({
                         command: 'createOffer',
                         parameters: [that.getId()]
