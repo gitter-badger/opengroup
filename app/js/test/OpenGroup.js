@@ -92,9 +92,9 @@ describe('openGroup', function () {
             peerConnection4.getAnswer(offer, function (answer) {
                 peerConnection3.acceptAnswer(answer, function () {
                     done();
-                })
-            })
-        })
+                });
+            });
+        });
     });
 
     it('should automatically connect to the other peers', function (done) {
@@ -107,8 +107,6 @@ describe('openGroup', function () {
                     done();
                 })
             })
-        })
-
-        done();
+        });
     });
 });
