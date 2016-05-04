@@ -2,6 +2,10 @@ var Renderer = function () {
     var that = this;
     this.templates = {};
     this.render = function (templateName, data, method, selector) {
+        if (!data) { data = []; }
+        if (!method) { method = 'append' }
+        if (!selector) { selector = 'body' }
+
         this.getTemplate(templateName, function (template) {
             var templateDom = $(template);
             $(selector)[method](templateDom);

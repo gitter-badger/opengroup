@@ -40,7 +40,18 @@ OpenGroupPlugins["opengroup.signaling"] = {
             initiate: {
                 label: 'Invite friend',
                 callback: function () {
-                    alert('invite');
+                    var renderData = {
+                        functions: {
+                            submit: function () {
+                                console.log(renderData.values)
+                            }
+                        },
+                        values: {
+
+                        }
+                    };
+
+                    opengroup.render('signaling.dialog.initiator', renderData);
                 }
             },
             answer: {

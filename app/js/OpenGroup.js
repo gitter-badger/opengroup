@@ -71,6 +71,7 @@ var OpenGroup = function (settings) {
         });
 
         this.renderer = new Renderer();
+        this.render = function (templateName, data, method, selector) { this.renderer.render(templateName, data, method, selector); };
         this.initMenu();
     };
 
@@ -87,7 +88,7 @@ var OpenGroup = function (settings) {
             }
         });
 
-        this.renderer.render('menu', { buttons: buttons }, 'append', 'body');
+        this.renderer.render('menu', { buttons: buttons });
     }
 };
 
