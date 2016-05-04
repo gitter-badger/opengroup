@@ -1,6 +1,12 @@
 var Renderer = function () {
     var that = this;
     this.templates = {};
+
+    rivets.configure({
+        prefix: 'bind',
+        templateDelimiters: ['{{', '}}']
+    });
+
     this.render = function (templateName, data, method, selector) {
         if (!data) { data = []; }
         if (!method) { method = 'append' }

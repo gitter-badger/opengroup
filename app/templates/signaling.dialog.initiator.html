@@ -1,6 +1,14 @@
 <div class="signaling dialog initiator">
-    <form>
-        <input type="email" rv-value="values.email" placeholder="Please enter an email">
-        <span rv-on-click="functions.submit">Submit</span>
-    </form>
+
+    <div bind-unless="values.offer">
+        <form>
+            <input type="email" bind-value="values.email" placeholder="Please enter an email">
+            <span bind-on-click="functions.submit">Submit</span>
+        </form>
+    </div>
+
+    <div bind-if="values.offer">
+        <textarea>{{ values.offer }}</textarea>
+    </div>
+
 </div>

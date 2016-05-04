@@ -43,7 +43,12 @@ OpenGroupPlugins["opengroup.signaling"] = {
                     var renderData = {
                         functions: {
                             submit: function () {
-                                console.log(renderData.values)
+                                if (!opengroup.peerConnections[renderData.values.email]) {
+                                    var peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
+                                    peerConnection.getOffer(function (offer) {
+                                        renderData.values.offer = offer;
+                                    })
+                                }
                             }
                         },
                         values: {
