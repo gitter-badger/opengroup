@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>OpenGroup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" crossorigin="anonymous"></script>
+    <script src="js/rivets.bundled.min.js"></script>
+    <script src="js/webrtc.polyfill.js"></script>
+    <script src="js/PeerConnection.js"></script>
+    <script src="js/OpenGroup.js"></script>
+    <script src="js/opengroup.signaling.js"></script>
+    <script src="js/opengroup.renderer.js"></script>
+
+    <script>
+        window.opengroup = new OpenGroup({
+            plugins: ['opengroup.signaling']
+        });
+
+        opengroup.init();
+    </script>
+
+</body>
+</html>

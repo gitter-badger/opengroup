@@ -150,7 +150,7 @@ var PeerConnection = function (uniquePeerId, openGroup) {
                     that.openGroup.peerConnections[peerConnectionId].sendMessage({
                         command: 'createOffer',
                         parameters: [that.getId()]
-                    }, 'signaling')
+                    }, 'opengroup.signaling')
                 }
             });
         }
