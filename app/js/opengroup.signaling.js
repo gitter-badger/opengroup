@@ -1,9 +1,9 @@
 OpenGroupPlugins["opengroup.signaling"] = {
     createOffer: function (uniquePeerId, openGroup, localUniquePeerId) {
-        if (!openGroup.peerConnections[uniquePeerId]) {
+        if (!openGroup.peerConnectionGet(uniquePeerId)) {
             var peerConnection = openGroup.peerConnectionAdd(uniquePeerId);
             peerConnection.getOffer(function (offer) {
-                openGroup.peerConnections[localUniquePeerId].sendMessage({
+                openGroup.peerConnectionGet(localUniquePeerId).sendMessage({
                     command: 'createAnswerMiddleman',
                     parameters: [offer, uniquePeerId]
                 }, 'opengroup.signaling');
@@ -11,8 +11,8 @@ OpenGroupPlugins["opengroup.signaling"] = {
         }
     },
     createAnswerMiddleman: function (offer, uniquePeerId, openGroup, localUniquePeerId) {
-        if (openGroup.peerConnections[uniquePeerId]) {
-            openGroup.peerConnections[uniquePeerId].sendMessage({
+        if (openGroup.peerConnectionGet(uniquePeerId)) {
+            openGroup.peerConnectionGet(uniquePeerId).sendMessage({
                 command: 'createAnswer',
                 parameters: [offer, localUniquePeerId]
             }, 'opengroup.signaling');
@@ -21,22 +21,22 @@ OpenGroupPlugins["opengroup.signaling"] = {
     createAnswer: function (offer, uniquePeerId, openGroup, localUniquePeerId) {
         var peerConnection = openGroup.peerConnectionAdd(uniquePeerId);
         peerConnection.getAnswer(offer, function (answer) {
-            openGroup.peerConnections[localUniquePeerId].sendMessage({
+            openGroup.peerConnectionGet(localUniquePeerId).sendMessage({
                 command: 'acceptAnswerMiddleman',
                 parameters: [answer, uniquePeerId]
             }, 'opengroup.signaling');
         })
     },
     acceptAnswerMiddleman: function (answer, uniquePeerId, openGroup, localUniquePeerId) {
-        if (openGroup.peerConnections[uniquePeerId]) {
-            openGroup.peerConnections[uniquePeerId].sendMessage({
+        if (openGroup.peerConnectionGet(uniquePeerId)) {
+            openGroup.peerConnectionGet(uniquePeerId).sendMessage({
                 command: 'acceptAnswer',
                 parameters: [answer, localUniquePeerId]
             }, 'opengroup.signaling');
         }
     },
     acceptAnswer: function (answer, uniquePeerId, openGroup, localUniquePeerId) {
-        var peerConnection = openGroup.peerConnections[uniquePeerId];
+        var peerConnection = openGroup.peerConnectionGet(uniquePeerId);
         peerConnection.acceptAnswer(answer)
     },
     hooks: {
@@ -73,16 +73,14 @@ OpenGroupPlugins["opengroup.signaling"] = {
                                 var ourAnswer = JSON.parse(atob(renderDataInitiator.values.answer));
                                 var newUniqueId = ourAnswer.name;
 
-                                var peerConnection = opengroup.peerConnections[renderDataInitiator.values.uniqueId];
+                                peerConnection = opengroup.peerConnectionGet(renderDataInitiator.values.uniqueId);
 
                                 peerConnection.onceConnected = function () {
                                     $('#signalingDialogInitiator').modal('hide');
                                 };
 
-                                opengroup.peerConnections[newUniqueId] = peerConnection;
-                                opengroup.peerConnections[newUniqueId].id = newUniqueId;
-                                delete opengroup.peerConnections[renderDataInitiator.values.uniqueId];
-                                opengroup.peerConnections[newUniqueId].acceptAnswer(ourAnswer.answer);
+                                peerConnection.id = newUniqueId;
+                                peerConnection.acceptAnswer(ourAnswer.answer);
                             }
                         },
                         values: {}
@@ -95,8 +93,8 @@ OpenGroupPlugins["opengroup.signaling"] = {
                     renderDataInitiator.values.offer = '';
 
                     renderDataInitiator.values.uniqueId = Math.random().toString(36).slice(2);
-                    if (!opengroup.peerConnections[renderDataInitiator.values.uniqueId]) {
-                        peerConnection = opengroup.peerConnectionAdd(renderDataInitiator.values.uniqueId);
+                    if (!opengroup.peerConnectionGet(renderDataInitiator.values.uniqueId)) {
+                        var peerConnection = opengroup.peerConnectionAdd(renderDataInitiator.values.uniqueId);
                         peerConnection.getOffer(function (offer) {
                             var ourOffer = {
                                 name: sessionStorage.getItem('opengroupNickname'),
@@ -122,7 +120,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
                                 var offer = ourOffer.offer;
                                 var uniqueId = ourOffer.name;
 
-                                if (!opengroup.peerConnections[uniqueId]) {
+                                if (!opengroup.peerConnectionGet(uniqueId)) {
                                     var peerConnection = opengroup.peerConnectionAdd(uniqueId);
 
                                     peerConnection.onceConnected = function () {

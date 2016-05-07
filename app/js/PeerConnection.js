@@ -142,12 +142,11 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }
 
         if (that.signalingRole == 'initiator') {
-
-            Object.keys(that.openGroup.peerConnections).forEach(function(peerConnectionId) {
-                if (peerConnectionId != that.getId()) {
+            $.each(that.openGroup.peerConnections, function (delta, peerConnection) {
+                if (peerConnection.getId() != that.getId()) {
 
                     // TODO the datachannel is not always ready, abstract the waiting process away.
-                    that.openGroup.peerConnections[peerConnectionId].sendMessage({
+                    peerConnection.sendMessage({
                         command: 'createOffer',
                         parameters: [that.getId()]
                     }, 'opengroup.signaling')

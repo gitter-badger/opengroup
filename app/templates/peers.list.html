@@ -1,7 +1,7 @@
 <div class="peers">
     <ul>
-        <li bind-each-property="peerConnections | propertyList">
-            <strong bind-text="property.key"></strong>: <span bind-text="property.value"></span>
+        <li bind-each-peer="peerConnections">
+            {{ peer.id }}
         </li>
     </ul>
 </div>

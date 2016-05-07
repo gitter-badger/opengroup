@@ -8,7 +8,7 @@ var OpenGroup = function (settings) {
     var that = this;
     this.settings = settings;
 
-    this.peerConnections = {};
+    this.peerConnections = [];
 
     /**
      * Create a new connection. Both sides need to run this function.
@@ -17,11 +17,20 @@ var OpenGroup = function (settings) {
      * @returns {PeerConnection}
      */
     this.peerConnectionAdd = function (uniquePeerId) {
-        if (!this.peerConnections[uniquePeerId]) {
-            return this.peerConnections[uniquePeerId] = new PeerConnection(uniquePeerId, that);
+        if (!this.peerConnectionGet(uniquePeerId)) {
+            var peerConnection = new PeerConnection(uniquePeerId, that);
+            this.peerConnections.push(peerConnection);
+            return this.peerConnectionGet(uniquePeerId);
         }
         else {
             throw "Connection with " + uniquePeerId + " already exists.";
+        }
+    };
+
+    this.peerConnectionGet = function (uniquePeerId) {
+        var result = $.grep(this.peerConnections, function(e){ return e.id == uniquePeerId; });
+        if (result.length) {
+            return result[0];
         }
     };
 
@@ -34,8 +43,8 @@ var OpenGroup = function (settings) {
     this.broadcast = function (message, owner) {
         if (!message || !owner) { throw "A broadcast needs a message and an owner of the message, where an owner is a plugin or responsible piece of the software."; }
 
-        Object.keys(this.peerConnections).forEach(function(peerConnectionId) {
-            that.peerConnections[peerConnectionId].sendMessage(message, owner);
+        $.each(this.peerConnections, function (detla, peerConnection) {
+            peerConnection.sendMessage(message, owner);
         });
     };
 
