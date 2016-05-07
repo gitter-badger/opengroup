@@ -73,6 +73,11 @@ var OpenGroup = function (settings) {
         this.renderer = new Renderer();
         this.render = function (templateName, data, method, selector, callback) { this.renderer.render(templateName, data, method, selector, callback); };
         this.initMenu();
+        this.initPeers();
+    };
+
+    this.initPeers = function () {
+        this.render('peers.list', opengroup);
     };
 
     this.initMenu = function () {
@@ -97,7 +102,7 @@ var OpenGroup = function (settings) {
             }
         });
 
-        this.renderer.render('menu', { buttons: buttons });
+        this.render('menu', { buttons: buttons });
     }
 };
 
@@ -117,4 +122,14 @@ rivets.binders['menu-link'] = {
     unbind: function(el) {
 
     }
+};
+
+rivets.formatters.propertyList = function(obj) {
+    return (function() {
+        var properties = [];
+        for (key in obj) {
+            properties.push({key: key, value: obj[key]});
+        }
+        return properties;
+    })();
 };

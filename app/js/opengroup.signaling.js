@@ -80,6 +80,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
                                 };
 
                                 opengroup.peerConnections[newUniqueId] = peerConnection;
+                                opengroup.peerConnections[newUniqueId].id = newUniqueId;
                                 delete opengroup.peerConnections[renderDataInitiator.values.uniqueId];
                                 opengroup.peerConnections[newUniqueId].acceptAnswer(ourAnswer.answer);
                             }
