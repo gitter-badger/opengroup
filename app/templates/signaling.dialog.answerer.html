@@ -1,17 +1,15 @@
-<div class="signaling dialog initiator">
+<div class="signaling dialog answerer">
 
-    <div bind-unless="values.offer">
+    <div bind-unless="values.answer">
         <form>
             <input type="email" bind-value="values.email" placeholder="Please enter an email">
+            <textarea bind-value="values.offer" id="offer"></textarea>
             <span bind-on-click="functions.submit">Submit</span>
         </form>
     </div>
 
-    <div bind-if="values.offer">
-        <textarea id="offer" bind-value="values.offer"></textarea>
+    <div bind-if="values.answer">
         <textarea id="answer" bind-value="values.answer"></textarea>
-
-        <span bind-on-click="functions.connect">Submit</span>
     </div>
 
 </div>

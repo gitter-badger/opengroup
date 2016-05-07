@@ -40,15 +40,21 @@ OpenGroupPlugins["opengroup.signaling"] = {
             initiate: {
                 label: 'Invite friend',
                 callback: function () {
+                    var peerConnection;
+
                     var renderData = {
                         functions: {
                             submit: function () {
                                 if (!opengroup.peerConnections[renderData.values.email]) {
-                                    var peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
+                                    peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
                                     peerConnection.getOffer(function (offer) {
-                                        renderData.values.offer = offer;
+                                        renderData.values.offer = btoa(JSON.stringify(offer.toJSON()));
                                     })
                                 }
+                            },
+                            connect: function () {
+                                var answer = JSON.parse(atob(renderData.values.answer));
+                                peerConnection.acceptAnswer(answer)
                             }
                         },
                         values: {
@@ -62,7 +68,24 @@ OpenGroupPlugins["opengroup.signaling"] = {
             answer: {
                 label: 'Answer invitation',
                 callback: function () {
-                    alert('answer');
+                    var renderData = {
+                        functions: {
+                            submit: function () {
+                                if (!opengroup.peerConnections[renderData.values.email]) {
+                                    var peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
+                                    var offer = JSON.parse(atob(renderData.values.offer));
+                                    peerConnection.getAnswer(offer, function (answer) {
+                                        renderData.values.answer = btoa(JSON.stringify(answer.toJSON()));
+                                    })
+                                }
+                            }
+                        },
+                        values: {
+
+                        }
+                    };
+
+                    opengroup.render('signaling.dialog.answerer', renderData);
                 }
             }
         }
