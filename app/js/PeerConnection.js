@@ -13,6 +13,7 @@ var PeerConnection = function (uniquePeerId, openGroup) {
     this.id = uniquePeerId;
     this.openGroup = openGroup;
     this.signalingRole = false;
+    this.status = 'offline';
 
     this.webrtcConnection = new RTCPeerConnection(this.config, this.constraints);
 
@@ -31,6 +32,13 @@ var PeerConnection = function (uniquePeerId, openGroup) {
                 delete that.onceSdpIsComplete;
             }
         }
+    };
+
+    /**
+     * @returns the ID of the peerConnection.
+     */
+    this.getStatus = function () {
+        return this.status;
     };
 
     /**
@@ -153,6 +161,8 @@ var PeerConnection = function (uniquePeerId, openGroup) {
                 }
             });
         }
+
+        that.status = 'online';
     };
 
     /**
@@ -167,6 +177,7 @@ var PeerConnection = function (uniquePeerId, openGroup) {
     };
 
     this.onDataChannelClose = function(e) {
+        that.status = 'offline';
         console.log('data channel close', e);
     };
 

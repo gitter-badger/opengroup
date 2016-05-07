@@ -160,7 +160,7 @@ rivets.binders['menu-link'] = {
 };
 
 /**
- * Object iterrating does NOT exist in rivets.
+ * Object iterating does NOT exist in rivets.
  * This is only usable for reading initial states of objects.
  *
  * @param obj
