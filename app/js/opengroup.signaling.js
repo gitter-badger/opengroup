@@ -11,10 +11,12 @@ OpenGroupPlugins["opengroup.signaling"] = {
         }
     },
     createAnswerMiddleman: function (offer, uniquePeerId, openGroup, localUniquePeerId) {
-        openGroup.peerConnections[uniquePeerId].sendMessage({
-            command: 'createAnswer',
-            parameters: [offer, localUniquePeerId]
-        }, 'opengroup.signaling');
+        if (openGroup.peerConnections[uniquePeerId]) {
+            openGroup.peerConnections[uniquePeerId].sendMessage({
+                command: 'createAnswer',
+                parameters: [offer, localUniquePeerId]
+            }, 'opengroup.signaling');
+        }
     },
     createAnswer: function (offer, uniquePeerId, openGroup, localUniquePeerId) {
         var peerConnection = openGroup.peerConnectionAdd(uniquePeerId);
@@ -26,66 +28,126 @@ OpenGroupPlugins["opengroup.signaling"] = {
         })
     },
     acceptAnswerMiddleman: function (answer, uniquePeerId, openGroup, localUniquePeerId) {
-        openGroup.peerConnections[uniquePeerId].sendMessage({
-            command: 'acceptAnswer',
-            parameters: [answer, localUniquePeerId]
-        }, 'opengroup.signaling');
+        if (openGroup.peerConnections[uniquePeerId]) {
+            openGroup.peerConnections[uniquePeerId].sendMessage({
+                command: 'acceptAnswer',
+                parameters: [answer, localUniquePeerId]
+            }, 'opengroup.signaling');
+        }
     },
     acceptAnswer: function (answer, uniquePeerId, openGroup, localUniquePeerId) {
         var peerConnection = openGroup.peerConnections[uniquePeerId];
         peerConnection.acceptAnswer(answer)
     },
     hooks: {
+        init: function () {
+            if (!sessionStorage.getItem('opengroupNickname')) {
+                renderDataNickname = {
+                    functions: {
+                        save: function () {
+                            sessionStorage.setItem('opengroupNickname', renderDataNickname.values.nickname);
+                            $('#signalingDialogNickname').modal('hide');
+                        }
+                    },
+                    values: {}
+                };
+
+                opengroup.render('signaling.dialog.nickname', renderDataNickname, 'append', 'body', function () {
+                    $('#signalingDialogNickname').modal('show');
+                });
+            }
+        },
         actions: {
             initiate: {
                 label: 'Invite friend',
-                callback: function () {
+                buttonAttributes: {
+                    'data-toggle': 'modal',
+                    'data-target': '#signalingDialogInitiator'
+                },
+                init: function () {
                     var peerConnection;
 
-                    var renderData = {
+                    renderDataInitiator = {
                         functions: {
-                            submit: function () {
-                                if (!opengroup.peerConnections[renderData.values.email]) {
-                                    peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
-                                    peerConnection.getOffer(function (offer) {
-                                        renderData.values.offer = btoa(JSON.stringify(offer.toJSON()));
-                                    })
-                                }
-                            },
                             connect: function () {
-                                var answer = JSON.parse(atob(renderData.values.answer));
-                                peerConnection.acceptAnswer(answer)
+                                var ourAnswer = JSON.parse(atob(renderDataInitiator.values.answer));
+                                var newUniqueId = ourAnswer.name;
+
+                                var peerConnection = opengroup.peerConnections[renderDataInitiator.values.uniqueId];
+
+                                peerConnection.onceConnected = function () {
+                                    $('#signalingDialogInitiator').modal('hide');
+                                };
+
+                                opengroup.peerConnections[newUniqueId] = peerConnection;
+                                delete opengroup.peerConnections[renderDataInitiator.values.uniqueId];
+                                opengroup.peerConnections[newUniqueId].acceptAnswer(ourAnswer.answer);
                             }
                         },
-                        values: {
-
-                        }
+                        values: {}
                     };
 
-                    opengroup.render('signaling.dialog.initiator', renderData);
+                    opengroup.render('signaling.dialog.initiator', renderDataInitiator);
+                },
+                callback: function () {
+                    renderDataInitiator.values.uniqueId = '';
+                    renderDataInitiator.values.offer = '';
+
+                    renderDataInitiator.values.uniqueId = Math.random().toString(36).slice(2);
+                    if (!opengroup.peerConnections[renderDataInitiator.values.uniqueId]) {
+                        peerConnection = opengroup.peerConnectionAdd(renderDataInitiator.values.uniqueId);
+                        peerConnection.getOffer(function (offer) {
+                            var ourOffer = {
+                                name: sessionStorage.getItem('opengroupNickname'),
+                                offer: offer.toJSON()
+                            };
+
+                            renderDataInitiator.values.offer = btoa(JSON.stringify(ourOffer));
+                        })
+                    }
                 }
             },
             answer: {
                 label: 'Answer invitation',
-                callback: function () {
-                    var renderData = {
+                buttonAttributes: {
+                    'data-toggle': 'modal',
+                    'data-target': '#signalingDialogAnswerer'
+                },
+                init: function () {
+                    renderDataAnswerer = {
                         functions: {
                             submit: function () {
-                                if (!opengroup.peerConnections[renderData.values.email]) {
-                                    var peerConnection = opengroup.peerConnectionAdd(renderData.values.email);
-                                    var offer = JSON.parse(atob(renderData.values.offer));
+                                var ourOffer = JSON.parse(atob(renderDataAnswerer.values.offer));
+                                var offer = ourOffer.offer;
+                                var uniqueId = ourOffer.name;
+
+                                if (!opengroup.peerConnections[uniqueId]) {
+                                    var peerConnection = opengroup.peerConnectionAdd(uniqueId);
+
+                                    peerConnection.onceConnected = function () {
+                                        $('#signalingDialogAnswerer').modal('hide');
+                                    };
+
                                     peerConnection.getAnswer(offer, function (answer) {
-                                        renderData.values.answer = btoa(JSON.stringify(answer.toJSON()));
+                                        var ourAnswer = {
+                                            name: sessionStorage.getItem('opengroupNickname'),
+                                            answer: answer.toJSON()
+                                        };
+
+                                        renderDataAnswerer.values.answer = btoa(JSON.stringify(ourAnswer));
                                     })
                                 }
                             }
                         },
-                        values: {
-
-                        }
+                        values: {}
                     };
 
-                    opengroup.render('signaling.dialog.answerer', renderData);
+                    opengroup.render('signaling.dialog.answerer', renderDataAnswerer);
+                },
+                callback: function () {
+                    renderDataInitiator.values.email = '';
+                    renderDataInitiator.values.offer = '';
+                    renderDataInitiator.values.answer = '';
                 }
             }
         }

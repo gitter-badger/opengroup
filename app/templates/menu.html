@@ -1,5 +1,5 @@
-<ul class="menu">
-    <li bind-each-button="buttons">
-        <span bind-on-click="button.action.callback">{{ button.action.label }}</span>
+<ul class="nav nav-pills nav-stacked">
+    <li bind-each-button="buttons" class="nav-item">
+        <span bind-on-click="button.action.callback" class="nav-link" bind-menu-link="button.action">{{ button.action.label }}</span>
     </li>
 <ul>

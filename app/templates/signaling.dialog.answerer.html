@@ -1,15 +1,31 @@
-<div class="signaling dialog answerer">
+<!-- Modal -->
+<div class="modal fade" id="signalingDialogAnswerer" tabindex="-1" role="dialog" aria-labelledby="signalingDialogAnswererLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="signalingDialogAnswererLabel">Answer invitation</h4>
+            </div>
+            <div class="modal-body">
 
-    <div bind-unless="values.answer">
-        <form>
-            <input type="email" bind-value="values.email" placeholder="Please enter an email">
-            <textarea bind-value="values.offer" id="offer"></textarea>
-            <span bind-on-click="functions.submit">Submit</span>
-        </form>
+                <form>
+                    <fieldset class="form-group" bind-unless="values.answer">
+                        <label for="OfferTextarea">Offer, you will receive this from your friend.</label>
+                        <textarea class="form-control" id="OfferTextarea" rows="3" bind-value="values.offer"></textarea>
+                    </fieldset>
+
+                    <fieldset class="form-group" bind-if="values.answer">
+                        <label for="AnswerTextarea">Answer, send this to your friend.</label>
+                        <textarea class="form-control" id="AnswerTextarea" rows="3" bind-value="values.answer"></textarea>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="modal-footer" bind-unless="values.answer">
+                <button bind-on-click="functions.submit" type="button" class="btn btn-primary">Connect</button>
+            </div>
+        </div>
     </div>
-
-    <div bind-if="values.answer">
-        <textarea id="answer" bind-value="values.answer"></textarea>
-    </div>
-
 </div>

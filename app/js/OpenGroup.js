@@ -71,19 +71,28 @@ var OpenGroup = function (settings) {
         });
 
         this.renderer = new Renderer();
-        this.render = function (templateName, data, method, selector) { this.renderer.render(templateName, data, method, selector); };
+        this.render = function (templateName, data, method, selector, callback) { this.renderer.render(templateName, data, method, selector, callback); };
         this.initMenu();
     };
 
     this.initMenu = function () {
         var buttons = [];
         $.each(this.settings.plugins, function (pluginDelta, plugin) {
+
+            if (OpenGroupPlugins[plugin] && OpenGroupPlugins[plugin].hooks && typeof OpenGroupPlugins[plugin].hooks.init == 'function') {
+                OpenGroupPlugins[plugin].hooks.init();
+            }
+
             if (OpenGroupPlugins[plugin] && OpenGroupPlugins[plugin].hooks && OpenGroupPlugins[plugin].hooks.actions) {
                 $.each(OpenGroupPlugins[plugin].hooks.actions, function (actionCommand, action) {
                     buttons.push({
                         plugin: plugin,
                         action: action
                     });
+
+                    if (typeof action.init == 'function') {
+                        action.init();
+                    }
                 })
             }
         });
@@ -94,4 +103,18 @@ var OpenGroup = function (settings) {
 
 window.errorCatcher = function (e) {
     console.log('error:', e)
-}
+};
+
+rivets.binders['menu-link'] = {
+    bind: function(el) {
+        if (typeof this.model.action.buttonAttributes == 'object') {
+            $.each(this.model.action.buttonAttributes, function (attributeName, attributeValue) {
+              $(el).attr(attributeName, attributeValue);
+            })
+        }
+    },
+
+    unbind: function(el) {
+
+    }
+};

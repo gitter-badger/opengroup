@@ -1,17 +1,31 @@
-<div class="signaling dialog initiator">
+<!-- Modal -->
+<div class="modal fade" id="signalingDialogInitiator" tabindex="-1" role="dialog" aria-labelledby="signalingDialogInitiatorLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="signalingDialogInitiatorLabel">Invite a friend</h4>
+            </div>
+            <div class="modal-body">
 
-    <div bind-unless="values.offer">
-        <form>
-            <input type="email" bind-value="values.email" placeholder="Please enter an email">
-            <span bind-on-click="functions.submit">Submit</span>
-        </form>
+                <form>
+                    <fieldset class="form-group" bind-if="values.offer">
+                        <label for="OfferTextarea">Offer, send this to your friend.</label>
+                        <textarea class="form-control" id="OfferTextarea" rows="3" bind-value="values.offer"></textarea>
+                    </fieldset>
+
+                    <fieldset class="form-group" bind-if="values.offer">
+                        <label for="AnswerTextarea">Answer, paste here the answer from your friend.</label>
+                        <textarea class="form-control" id="AnswerTextarea" rows="3" bind-value="values.answer"></textarea>
+                    </fieldset>
+                </form>
+            </div>
+
+            <div bind-if="values.offer" class="modal-footer">
+                <button bind-on-click="functions.connect" type="button" class="btn btn-primary">Connect</button>
+            </div>
+        </div>
     </div>
-
-    <div bind-if="values.offer">
-        <textarea id="offer" bind-value="values.offer"></textarea>
-        <textarea id="answer" bind-value="values.answer"></textarea>
-
-        <span bind-on-click="functions.connect">Submit</span>
-    </div>
-
 </div>

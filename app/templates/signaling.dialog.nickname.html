@@ -1,0 +1,26 @@
+<!-- Modal -->
+<div class="modal fade" id="signalingDialogNickname" tabindex="-1" role="dialog" aria-labelledby="signalingDialogNicknameLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="signalingDialogNicknameLabel">Please enter a nickname</h4>
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <fieldset class="form-group">
+                        <label for="Nickname">This will be send to people you connect with.</label>
+                        <input type="text" class="form-control" id="Nickname" bind-value="values.nickname">
+                    </fieldset>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button bind-on-click="functions.save" type="button" class="btn btn-primary">Save nickname</button>
+            </div>
+        </div>
+    </div>
+</div>

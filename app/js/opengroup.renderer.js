@@ -7,7 +7,7 @@ var Renderer = function () {
         templateDelimiters: ['{{', '}}']
     });
 
-    this.render = function (templateName, data, method, selector) {
+    this.render = function (templateName, data, method, selector, callback) {
         if (!data) { data = []; }
         if (!method) { method = 'append' }
         if (!selector) { selector = 'body' }
@@ -16,6 +16,10 @@ var Renderer = function () {
             var templateDom = $(template);
             $(selector)[method](templateDom);
             rivets.bind(templateDom, data);
+
+            if (typeof callback == 'function') {
+                callback();
+            }
         });
     };
 
