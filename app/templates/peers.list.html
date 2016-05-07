@@ -1,7 +1,10 @@
 <div class="peers">
     <ul>
         <li bind-each-peer="peerConnections">
-            {{ peer.id }}
+            name: {{ peer.id }}<br>
+            datachannel state: {{ peer.dataChannel.readyState }}<br>
+            iceConnectionState: {{ peer.webrtcConnection.iceConnectionState }}<br>
+            signalingState: {{ peer.webrtcConnection.signalingState }}<br>
         </li>
     </ul>
 </div>

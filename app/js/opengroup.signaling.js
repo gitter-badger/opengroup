@@ -1,3 +1,4 @@
+// Refactor with error handling.
 OpenGroupPlugins["opengroup.signaling"] = {
     createOffer: function (uniquePeerId, openGroup, localUniquePeerId) {
         if (!openGroup.peerConnectionGet(uniquePeerId)) {

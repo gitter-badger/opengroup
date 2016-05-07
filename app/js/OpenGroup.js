@@ -27,6 +27,12 @@ var OpenGroup = function (settings) {
         }
     };
 
+    /**
+     * Returns a specific peerConnection.
+     *
+     * @param uniquePeerId
+     * @returns {*}
+     */
     this.peerConnectionGet = function (uniquePeerId) {
         var result = $.grep(this.peerConnections, function(e){ return e.id == uniquePeerId; });
         if (result.length) {
@@ -34,6 +40,10 @@ var OpenGroup = function (settings) {
         }
     };
 
+    /**
+     * Returns all peerConnections in an array.
+     * @returns {Array}
+     */
     this.peerConnectionGetAll = function () {
       return this.peerConnections;
     };
@@ -78,6 +88,9 @@ var OpenGroup = function (settings) {
         }
     };
 
+    /**
+     * Init plugin architecture.
+     */
     this.init = function () {
         $.each(this.settings.plugins, function (delta, plugin) {
             $.getScript('/js/' + plugin + '.js');
@@ -89,10 +102,16 @@ var OpenGroup = function (settings) {
         this.initPeers();
     };
 
+    /**
+     * Render the peers UI.
+     */
     this.initPeers = function () {
         this.render('peers.list', opengroup);
     };
 
+    /**
+     * Render the menu UI.
+     */
     this.initMenu = function () {
         var buttons = [];
         $.each(this.settings.plugins, function (pluginDelta, plugin) {
@@ -123,6 +142,9 @@ window.errorCatcher = function (e) {
     console.log('error:', e)
 };
 
+/**
+ * The menu link was difficult via standard rivets, so a binder.
+ */
 rivets.binders['menu-link'] = {
     bind: function(el) {
         if (typeof this.model.action.buttonAttributes == 'object') {
@@ -137,6 +159,12 @@ rivets.binders['menu-link'] = {
     }
 };
 
+/**
+ * Object iterrating does NOT exist in rivets.
+ * This is only usable for reading initial states of objects.
+ *
+ * @param obj
+ */
 rivets.formatters.propertyList = function(obj) {
     return (function() {
         var properties = [];
