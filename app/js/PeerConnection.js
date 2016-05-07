@@ -176,11 +176,19 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         that.openGroup.receiveMessage(data.message, data.owner, that.getId());
     };
 
+    /**
+     * The event callback when the webRTC datachannel closes.
+     * @param e Event with the webRTC data.
+     */
     this.onDataChannelClose = function(e) {
         that.status = 'offline';
         console.log('data channel close', e);
     };
 
+    /**
+     * The event callback when the webRTC datachannel receives an error.
+     * @param e Event with the webRTC data.
+     */
     this.onDataChannelError = function (err) {
         console.log(err);
     };
