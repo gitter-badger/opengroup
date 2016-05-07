@@ -82,12 +82,19 @@ OpenGroupPlugins["opengroup.signaling"] = {
 
                                 peerConnection.id = newUniqueId;
                                 peerConnection.acceptAnswer(ourAnswer.answer);
+                            },
+                            copyOffer: function () {
+                                setTimeout(function() {
+                                    renderDataInitiator.values.copiedOffer = true;
+                                }, 300);
                             }
                         },
                         values: {}
                     };
 
-                    opengroup.render('signaling.dialog.initiator', renderDataInitiator);
+                    opengroup.render('signaling.dialog.initiator', renderDataInitiator, 'append', 'body', function () {
+                        new Clipboard('[data-clipboard-target]');
+                    });
                 },
                 callback: function () {
                     renderDataInitiator.values.uniqueId = '';

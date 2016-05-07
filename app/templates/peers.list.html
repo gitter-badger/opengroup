@@ -2,10 +2,7 @@
     <ul>
         <li bind-each-peer="peerConnections">
             name: {{ peer.id }}<br>
-            status: {{ peer.status }}<br>
-            datachannel state: {{ peer.dataChannel.readyState }}<br>
-            iceConnectionState: {{ peer.webrtcConnection.iceConnectionState }}<br>
-            signalingState: {{ peer.webrtcConnection.signalingState }}<br>
+            status: {{ peer.status }}
         </li>
     </ul>
 </div>

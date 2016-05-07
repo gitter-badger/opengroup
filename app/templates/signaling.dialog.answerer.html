@@ -23,8 +23,12 @@
                 </form>
             </div>
 
+            <div class="modal-footer" bind-if="values.answer">
+                <button data-clipboard-target="#AnswerTextarea" type="button" class="btn btn-primary">Copy answer to clipboard</button>
+            </div>
+
             <div class="modal-footer" bind-unless="values.answer">
-                <button bind-on-click="functions.submit" type="button" class="btn btn-primary">Connect</button>
+                <button bind-on-click="functions.submit" type="button" class="btn btn-primary">Create answer</button>
             </div>
         </div>
     </div>
