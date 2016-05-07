@@ -34,6 +34,10 @@ var OpenGroup = function (settings) {
         }
     };
 
+    this.peerConnectionGetAll = function () {
+      return this.peerConnections;
+    };
+
     /**
      * Send a message to all connected peers.
      *

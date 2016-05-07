@@ -142,14 +142,14 @@ var PeerConnection = function (uniquePeerId, openGroup) {
         }
 
         if (that.signalingRole == 'initiator') {
-            $.each(that.openGroup.peerConnections, function (delta, peerConnection) {
+            $.each(that.openGroup.peerConnectionGetAll(), function (delta, peerConnection) {
                 if (peerConnection.getId() != that.getId()) {
 
                     // TODO the datachannel is not always ready, abstract the waiting process away.
                     peerConnection.sendMessage({
                         command: 'createOffer',
                         parameters: [that.getId()]
-                    }, 'opengroup.signaling')
+                    }, 'opengroup.signaling');
                 }
             });
         }
