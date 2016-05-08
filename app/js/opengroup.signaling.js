@@ -48,6 +48,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
                         save: function () {
                             sessionStorage.setItem('opengroupNickname', renderDataNickname.values.nickname);
                             $('#signalingDialogNickname').modal('hide');
+                            return false;
                         }
                     },
                     values: {}
@@ -82,6 +83,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
 
                                 peerConnection.id = newUniqueId;
                                 peerConnection.acceptAnswer(ourAnswer.answer);
+                                return false;
                             },
                             copyOffer: function () {
                                 setTimeout(function() {
@@ -145,6 +147,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
                                         renderDataAnswerer.values.answer = btoa(JSON.stringify(ourAnswer));
                                     })
                                 }
+                                return false;
                             }
                         },
                         values: {}
