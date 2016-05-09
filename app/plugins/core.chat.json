@@ -1,0 +1,17 @@
+{
+  "label": "Standard group chat",
+  "name": "core.chat",
+  "type": "Tab",
+  "settings": {
+    "weight": -1
+  },
+  "core": true,
+  "files": {
+    "javascript": [
+      "scripts/tab/ChatTab.js"
+    ],
+    "templates": [
+      "chat-tab.html"
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-OG.Signaler = OG.Evented.extend({
+OG.ChatTab = OG.Tab.extend({
 
     options: {
 

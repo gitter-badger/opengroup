@@ -1,4 +1,4 @@
-OG.Signaler = OG.Evented.extend({
+OG.Peer = OG.Evented.extend({
 
     options: {
 

@@ -1,6 +1,7 @@
 OG.Group.include({
     _loadPlugins: function () {
         var that = this;
+        var filesToRequest = [];
 
         this.options.plugins.forEach(function (plugin) {
             var pluginDefinitionLocation;
@@ -16,15 +17,26 @@ OG.Group.include({
                 pluginDefinitionLocation = plugin + '/plugin.json';
             }
 
-            OG.Util.ajax(pluginDefinitionLocation, {
-                success: function (pluginDefinition) {
-                    if (pluginDefinition && pluginDefinition.name) {
-                        that.pluginDefinitions.push(pluginDefinition);
-                        that._initPlugin(pluginDefinition.name);
-                    }
+            filesToRequest.push(pluginDefinitionLocation);
+        });
+
+        async.each(filesToRequest, function (filename, callback) {
+            OG.Util.ajax(filename).done(function (pluginDefinition) {
+                if (pluginDefinition && pluginDefinition.name) {
+                    that.pluginDefinitions.push(pluginDefinition);
+                    that._initPlugin(pluginDefinition.name);
                 }
+
+                callback();
             });
-        })
+        }, function(err) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                that.fire('plugins.loaded');
+            }
+        });
     },
 
     _getPluginDefinition: function (plugin) {
@@ -71,6 +83,6 @@ OG.Group.include({
     }
 });
 
-OG.Group.addInitHook(function () {
+OG.Group.addInitHook('plugins', function () {
     this._loadPlugins();
 });

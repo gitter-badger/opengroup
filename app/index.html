@@ -28,6 +28,8 @@
     <!-- bower:js -->
     <script src="/bower_components/jquery/dist/jquery.js"></script>
     <script src="/bower_components/async/lib/async.js"></script>
+    <script src="/bower_components/sightglass/index.js"></script>
+    <script src="/bower_components/rivets/dist/rivets.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     
@@ -43,15 +45,20 @@
     <script src="scripts/plugin/Plugin.js"></script>
 
     <script src="scripts/signaler/Signaler.js"></script>
+    <script src="scripts/peer/Peer.js"></script>
+    <script src="scripts/tab/Tab.js"></script>
+
+    <script src="scripts/renderer/Renderer.js"></script>
+    <script src="scripts/renderer/RivetsRenderer.js"></script>
 
     <script>
-      OpenGroup = OG.group('opengroup', {
-        plugins: ['core.signaler.manual'],
+      OpenGroup = new OG.Group('opengroup', {
+        plugins: ['core.signaler.manual', 'core.chat'],
         signalers: [
           {
             type: 'ManualSignaler'
           }
-        ]
+        ],
       });
     </script>
 

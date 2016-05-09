@@ -65,14 +65,16 @@ OG.Class.extend = function (props) {
 
         if (this._initHooksCalled) { return; }
 
-        if (parentProto.callInitHooks) {
+        if (parentProto.callInitHooks && parentProto._initHooks.length) {
             parentProto.callInitHooks.call(this);
         }
 
         this._initHooksCalled = true;
 
+        proto._initHooks = OG.Util.sortByKey(proto._initHooks, 'weight');
+
         for (var i = 0, len = proto._initHooks.length; i < len; i++) {
-            proto._initHooks[i].call(this);
+            proto._initHooks[i].init.call(this);
         }
     };
 
@@ -96,7 +98,7 @@ OG.Class.mergeOptions = function (options) {
 
 // @function addInitHook(fn: Function): this
 // Adds a [constructor hook](#class-constructor-hooks) to the class.
-OG.Class.addInitHook = function (fn) { // (Function) || (String, args...)
+OG.Class.addInitHook = function (name, fn, weight) { // (Function) || (String, args...)
     var args = Array.prototype.slice.call(arguments, 1);
 
     var init = typeof fn === 'function' ? fn : function () {
@@ -104,6 +106,10 @@ OG.Class.addInitHook = function (fn) { // (Function) || (String, args...)
     };
 
     this.prototype._initHooks = this.prototype._initHooks || [];
-    this.prototype._initHooks.push(init);
+    this.prototype._initHooks.push({
+        name: name,
+        init: init,
+        weight: weight ? weight: 0
+    });
     return this;
 };

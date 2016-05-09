@@ -96,6 +96,13 @@ OG.Util = {
         return wrapperFn;
     },
 
+    sortByKey: function (array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    },
+
     // @function wrapNum(num: Number, range: Number[], includeMax?: Boolean): Number
     // Returns the number `num` modulo `range` in such a way so it lies within
     // `range[0]` and `range[1]`. The returned value will be always smaller than

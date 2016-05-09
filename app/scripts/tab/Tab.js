@@ -1,4 +1,4 @@
-OG.Signaler = OG.Evented.extend({
+OG.Tab = OG.Evented.extend({
 
     options: {
 

@@ -9,19 +9,20 @@
 OG.Group = OG.Evented.extend({
 
     options: {
-        plugins: ['core.signaler.manual']
+        plugins: ['core.signaler.manual'],
+        renderer: {
+            name: 'RivetsRenderer',
+            settings: {
+
+            }
+        }
     },
 
     pluginDefinitions: [],
 
     initialize: function (id, options) { // (HTMLElement or String, Object)
         OG.setOptions(this, options);
-        this.callInitHooks();
     },
 
 
 });
-
-OG.group = function (id, options) {
-    return new OG.Group(id, options);
-};
