@@ -80,6 +80,8 @@ OG.Renderer = OG.Evented.extend({
         if (!method) { method = 'append' }
         if (!selector) { selector = this.group.selector }
 
+        console.log(data)
+
         var template = this._getTemplate(templateName, templateOwner);
         var templateDom = $(template);
         $(selector)[method](templateDom);
