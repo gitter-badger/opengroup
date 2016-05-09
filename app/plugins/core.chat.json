@@ -11,7 +11,7 @@
       "scripts/tab/ChatTab.js"
     ],
     "templates": [
-      "chat-tab.html"
+      "chat-tab"
     ]
   },
   "initClass": "ChatTab"

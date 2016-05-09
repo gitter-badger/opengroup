@@ -6,7 +6,10 @@ OG.Renderer = OG.Evented.extend({
 
     coreTemplates: ['tabs'],
 
-    templates: {},
+    templates: {
+        core: {},
+        plugins: {}
+    },
 
     initialize: function (group, options) {
         this.group = group;
@@ -25,13 +28,16 @@ OG.Renderer = OG.Evented.extend({
         var filesToRequest = [];
 
         this.coreTemplates.forEach(function (templateName) {
-            filesToRequest.push('/templates/core/' + templateName + '.html');
+            filesToRequest.push({
+                file: '/templates/core/' + templateName + '.html',
+                templateName: templateName
+            });
         });
 
-        async.each(filesToRequest, function (filename, callback) {
-            OG.Util.ajax(filename, {
+        async.each(filesToRequest, function (fileObject, callback) {
+            OG.Util.ajax(fileObject.file, {
                 success: function (template) {
-                    that.templates[filename] = template;
+                    that.templates['core'][fileObject.templateName] = template;
                     callback();
                 }
             });
@@ -62,15 +68,22 @@ OG.Renderer = OG.Evented.extend({
                 }
 
                 pluginDefinition.files.templates.forEach(function (templateFile) {
-                    filesToRequest.push(pluginBaseUrl + templateFile);
+                    filesToRequest.push({
+                        file: pluginBaseUrl + templateFile + '.html',
+                        plugin: pluginDefinition.name,
+                        templateName: templateFile
+                    });
                 });
             }
         });
 
-        async.each(filesToRequest, function (filename, callback) {
-            OG.Util.ajax(filename, {
+        async.each(filesToRequest, function (fileObject, callback) {
+            OG.Util.ajax(fileObject.file, {
                 success: function (template) {
-                    that.templates[filename] = template;
+                    if (!that.templates.plugins[fileObject.plugin]) {
+                        that.templates.plugins[fileObject.plugin] = {};
+                    }
+                    that.templates.plugins[fileObject.plugin][fileObject.templateName] = template;
                     callback();
                 }
             });
@@ -98,7 +111,7 @@ OG.Renderer = OG.Evented.extend({
     },
 
     _getTemplate: function (name, owner) {
-        console.log('yo')
+        console.log(this)
     }
 
 });
