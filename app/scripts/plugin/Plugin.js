@@ -80,14 +80,9 @@ OG.Group.include({
                     console.log(err);
                 }
                 else {
-                    if (that._renderer._initHooksCalled) {
+                    that.on('renderer.templatesLoaded', function () {
                         startPlugin();
-                    }
-                    else {
-                        that.on('renderer.initiated', function () {
-                            startPlugin();
-                        })
-                    }
+                    })
                 }
             });
         }

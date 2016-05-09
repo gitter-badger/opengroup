@@ -8,49 +8,27 @@ OG.Renderer = OG.Evented.extend({
 
     templates: {
         core: {},
-        plugins: {}
     },
 
     initialize: function (group, options) {
         this.group = group;
         OG.setOptions(this, options);
-        this._loadTemplates();
-        this.group.fire('renderer.initiated');
+        this._loadTemplates(function () {
+            group.fire('renderer.templatesLoaded');
+        });
     },
 
-    _loadTemplates: function () {
-        this._loadCoreTemplates();
-        this._loadPluginTemplates();
-    },
-
-    _loadCoreTemplates: function () {
+    _loadTemplates: function (callback) {
         var that = this;
         var filesToRequest = [];
 
         this.coreTemplates.forEach(function (templateName) {
             filesToRequest.push({
                 file: '/templates/core/' + templateName + '.html',
+                plugin: 'core',
                 templateName: templateName
             });
         });
-
-        async.each(filesToRequest, function (fileObject, callback) {
-            OG.Util.ajax(fileObject.file, {
-                success: function (template) {
-                    that.templates['core'][fileObject.templateName] = template;
-                    callback();
-                }
-            });
-        }, function(err) {
-            if (err) {
-                console.log(err);
-            }
-        });
-    },
-
-    _loadPluginTemplates: function () {
-        var that = this;
-        var filesToRequest = [];
 
         this.group.pluginDefinitions.forEach(function (pluginDefinition) {
             if (pluginDefinition.files && pluginDefinition.files.templates) {
@@ -80,10 +58,10 @@ OG.Renderer = OG.Evented.extend({
         async.each(filesToRequest, function (fileObject, callback) {
             OG.Util.ajax(fileObject.file, {
                 success: function (template) {
-                    if (!that.templates.plugins[fileObject.plugin]) {
-                        that.templates.plugins[fileObject.plugin] = {};
+                    if (!that.templates[fileObject.plugin]) {
+                        that.templates[fileObject.plugin] = {};
                     }
-                    that.templates.plugins[fileObject.plugin][fileObject.templateName] = template;
+                    that.templates[fileObject.plugin][fileObject.templateName] = template;
                     callback();
                 }
             });
@@ -91,27 +69,34 @@ OG.Renderer = OG.Evented.extend({
             if (err) {
                 console.log(err);
             }
-        });
-    },
-
-    render: function (templateName, templateOwner, data, method, selector, callback) {
-        if (!data) { data = []; }
-        if (!method) { method = 'append' }
-        if (!selector) { selector = 'body' }
-
-        this._getTemplate(templateName, function (name, owner) {
-            var templateDom = $(template);
-            $(selector)[method](templateDom);
-            rivets.bind(templateDom, data);
-
-            if (typeof callback == 'function') {
+            else {
                 callback();
             }
         });
     },
 
-    _getTemplate: function (name, owner) {
-        console.log(this)
+    render: function (templateName, templateOwner, data, callback, method, selector) {
+        if (!data) { data = []; }
+        if (!method) { method = 'append' }
+        if (!selector) { selector = this.group.selector }
+
+        var template = this._getTemplate(templateName, templateOwner);
+        var templateDom = $(template);
+        $(selector)[method](templateDom);
+        rivets.bind(templateDom, data);
+
+        if (typeof callback == 'function') {
+            callback();
+        }
+    },
+
+    _getTemplate: function (templateName, templateOwner) {
+        if (this.templates[templateOwner] && this.templates[templateOwner][templateName]) {
+            return this.templates[templateOwner][templateName];
+        }
+        else {
+            throw("Template not found: " + templateName + ', ' + templateOwner);
+        }
     }
 
 });

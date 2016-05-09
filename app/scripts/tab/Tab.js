@@ -1,7 +1,8 @@
 OG.Tab = OG.Evented.extend({
 
     options: {
-
+        owner: 'core',
+        template: 'tab'
     },
 
     initialize: function (group, options) { // (Object)
@@ -11,7 +12,9 @@ OG.Tab = OG.Evented.extend({
 
     render: function () {
         OG.Util.stamp(this);
-        this.group.render();
+        this.group.render(this.options.template, this.options.owner, this, function () {
+
+        });
     },
 
     _addTo: function (group) {
