@@ -4,10 +4,4 @@ OG.ChatTab = OG.Tab.extend({
 
     },
 
-    initialize: function (options) { // (Object)
-        OG.setOptions(this, options);
-    },
-
-
-
 });

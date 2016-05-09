@@ -52,6 +52,7 @@ OG.Group.include({
     },
 
     _initPlugin: function (plugin) {
+        var that = this;
         var pluginDefinition = this._getPluginDefinition(plugin);
         var filesToRequest = [];
 
@@ -78,7 +79,31 @@ OG.Group.include({
                 if (err) {
                     console.log(err);
                 }
+                else {
+                    if (that._renderer._initHooksCalled) {
+                        startPlugin();
+                    }
+                    else {
+                        that.on('renderer.initiated', function () {
+                            startPlugin();
+                        })
+                    }
+                }
             });
+        }
+
+        var startPlugin = function () {
+            if (pluginDefinition.initClass){
+                var pluginInstanceSettings;
+                if (that.options.plugins[plugin]) {
+                    pluginInstanceSettings = that.options.plugins[plugin];
+                }
+                else {
+                    pluginInstanceSettings = {};
+                }
+                var pluginInstance = new OG[pluginDefinition.initClass](that);
+                pluginInstance._addTo(that);
+            }
         }
     }
 });

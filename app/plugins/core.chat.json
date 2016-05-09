@@ -13,5 +13,6 @@
     "templates": [
       "chat-tab.html"
     ]
-  }
+  },
+  "initClass": "ChatTab"
 }
