@@ -2,7 +2,7 @@
   "label": "Standard group chat",
   "name": "core.chat",
   "type": "Tab",
-  "settings": {
+  "tabSettings": {
     "weight": -1
   },
   "core": true,
