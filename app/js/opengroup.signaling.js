@@ -102,6 +102,7 @@ OpenGroupPlugins["opengroup.signaling"] = {
                     renderDataInitiator.values.uniqueId = '';
                     renderDataInitiator.values.offer = '';
                     renderDataInitiator.values.answer = '';
+                    renderDataInitiator.values.copiedOffer = false;
 
                     renderDataInitiator.values.uniqueId = Math.random().toString(36).slice(2);
                     if (!opengroup.peerConnectionGet(renderDataInitiator.values.uniqueId)) {
