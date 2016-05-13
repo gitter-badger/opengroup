@@ -21,6 +21,7 @@ OG.Group = OG.Evented.extend({
     pluginDefinitions: [],
 
     initialize: function (id, options) { // (HTMLElement or String, Object)
+        OG.Util.stamp(this);
         this.selector = id;
         OG.setOptions(this, options);
     },
