@@ -18,6 +18,8 @@ OG.Renderer = OG.Evented.extend({
         });
     },
 
+    // TODO check if it is a good idea to preload all the templates,
+    // Come up with a strategy.
     _loadTemplates: function (callback) {
         var that = this;
         var filesToRequest = [];

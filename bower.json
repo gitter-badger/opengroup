@@ -5,7 +5,8 @@
     "jquery": "~2.1.1",
     "modernizr": "~2.8.1",
     "async": "^1.5.2",
-    "rivets": "^0.8.1"
+    "rivets": "^0.8.1",
+    "rivets-include": "der-On/rivets-include#^0.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
