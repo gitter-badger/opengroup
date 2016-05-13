@@ -80,9 +80,7 @@ OG.Group.include({
                     console.log(err);
                 }
                 else {
-                    that.on('renderer.templatesLoaded', function () {
-                        startPlugin();
-                    })
+                    startPlugin();
                 }
             });
         }

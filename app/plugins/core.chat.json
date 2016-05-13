@@ -9,9 +9,6 @@
   "files": {
     "javascript": [
       "scripts/tab/ChatTab.js"
-    ],
-    "templates": [
-      "chat-tab"
     ]
   },
   "initClass": "ChatTab"
