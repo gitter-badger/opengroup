@@ -15,20 +15,9 @@ OG.Renderer = OG.Evented.extend({
         OG.setOptions(this, options);
     },
 
+    // TODO do we need this kind of freedom to select where to add the html?
     render: function (templateName, templateOwner, data, callback, selector, method) {
-        if (!data) { data = []; }
-        if (!method) { method = 'append' }
-        if (!selector) { selector = this.group.selector }
 
-        this._getTemplate(templateName, templateOwner, function (template) {
-            var templateDom = $(template);
-            $(selector)[method](templateDom);
-            rivets.bind(templateDom, data);
-
-            if (typeof callback == 'function') {
-                callback();
-            }
-        });
     },
 
     _getTemplate: function (templateName, templateOwner, callback) {

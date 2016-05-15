@@ -15,7 +15,7 @@
     <!-- endbuild -->
 
     <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/styles.css">
     <!-- endbuild -->
     
     <!-- build:js scripts/vendor/modernizr.js -->
@@ -30,8 +30,6 @@
     <script src="/bower_components/async/lib/async.js"></script>
     <script src="/bower_components/sightglass/index.js"></script>
     <script src="/bower_components/rivets/dist/rivets.js"></script>
-    <script src="/bower_components/superagent/superagent.js"></script>
-    <script src="/bower_components/rivets-include/rivets-include.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     
@@ -53,6 +51,8 @@
     <script src="scripts/renderer/Renderer.js"></script>
     <script src="scripts/renderer/RivetsRenderer.js"></script>
 
+    <div id="opengroup"></div>
+
     <script>
       OpenGroup = new OG.Group('#opengroup', {
         plugins: ['core.signaler.manual', 'core.chat'],
@@ -60,11 +60,9 @@
           {
             type: 'ManualSignaler'
           }
-        ],
+        ]
       });
     </script>
-
-    <div id="opengroup"></div>
 
     <!-- endbuild -->
   </body>

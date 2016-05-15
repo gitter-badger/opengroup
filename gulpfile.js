@@ -4,12 +4,14 @@ const gulpLoadPlugins = require('gulp-load-plugins');
 const browserSync = require('browser-sync');
 const del = require('del');
 const wiredep = require('wiredep').stream;
+const sassGlob = require('gulp-sass-glob');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.scss')
+    .pipe(sassGlob())
     .pipe($.plumber())
     .pipe($.sourcemaps.init())
     .pipe($.sass.sync({

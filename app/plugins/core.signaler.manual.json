@@ -1,11 +1,12 @@
 {
   "label": "Manual signaler",
   "name": "core.signaler.manual",
-  "type": "Signaler",
   "core": true,
   "files": {
     "javascript": [
-      "scripts/signaler/ManualSignaler.js"
+      "scripts/signaler/ManualSignaler.js",
+      "scripts/tab/ManualSignalerTab.js"
     ]
-  }
+  },
+  "initClass": "ManualSignalerTab"
 }

@@ -1,36 +1,46 @@
 OG.Tab = OG.Evented.extend({
 
     options: {
-        owner: 'core',
-        template: 'tab'
+        templates: {
+            tab: 'tab',
+            icon: 'icon'
+        }
     },
 
-    initialize: function (group, options) { // (Object)
+    active: false,
+
+    initialize: function (group, options) {
         OG.Util.stamp(this);
         this.group = group;
         OG.setOptions(this, options);
     },
 
-    render: function () {
-        this.group.render(this.options.template, this.options.owner, this, function () {
-        }, '#og-tabs-wrapper');
+    _addTo: function (group) {
+        group.addTab(this);
     },
 
-    _addTo: function (group) {
-        group._addTab(this);
+    tabClick: function (event, model) {
+        model.setActiveTab(model.tab.name);
     }
-
 });
 
 OG.Group.include({
-    _addTab: function (tab) {
+    addTab: function (tab) {
         if (!this.tabs) {
             this.tabs = [];
 
             this.render('tabs', 'core', this);
+            tab.active = true;
         }
 
         this.tabs.push(tab);
-        tab.render();
+    },
+
+    setActiveTab: function (tabName) {
+        var that = this;
+
+        that.tabs.forEach(function (tab) {
+            tab.active = tab.name == tabName;
+        });
     }
 });

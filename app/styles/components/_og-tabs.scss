@@ -1,0 +1,39 @@
+.og-tabs-content-item-content {
+  visibility: hidden;
+
+  &.is-active {
+    visibility: visible;
+  }
+}
+
+.og-tabs-content, .og-tabs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  float: left;
+  clear: both;
+  width: 100%;
+  position: relative;
+}
+
+.og-tabs-item {
+  float: left;
+}
+
+.og-tabs-item-icon {
+  cursor: pointer;
+  padding: 10px;
+  
+  &.is-active {
+    background-color: red;
+  }
+}
+
+.og-tabs-content-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+

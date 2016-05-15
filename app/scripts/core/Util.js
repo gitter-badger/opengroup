@@ -25,6 +25,11 @@ OG.Util = {
         return $.ajax.apply(this, arguments);
     },
 
+    // This is so we can remove jQuery and swap it for something else.
+    $: function () {
+        return $.apply(this, arguments);
+    },
+
     // @function create(proto: Object, properties?: Object): Object
     // Compatibility polyfill for [Object.create](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
     create: Object.create || (function () {
