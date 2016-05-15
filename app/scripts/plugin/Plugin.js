@@ -33,9 +33,6 @@ OG.Group.include({
             if (err) {
                 console.log(err);
             }
-            else {
-                that.fire('plugins.loaded');
-            }
         });
     },
 
@@ -86,16 +83,20 @@ OG.Group.include({
         }
 
         var startPlugin = function () {
-            if (pluginDefinition.initClass){
-                var pluginInstanceSettings;
-                if (that.options.plugins[plugin]) {
-                    pluginInstanceSettings = that.options.plugins[plugin];
-                }
-                else {
-                    pluginInstanceSettings = {};
-                }
-                var pluginInstance = new OG[pluginDefinition.initClass](that);
-                pluginInstance._addTo(that);
+            if (pluginDefinition.initClasses){
+                pluginDefinition.initClasses.forEach(function (initClass) {
+                    var pluginInstanceSettings;
+                    if (that.options.plugins[plugin]) {
+                        pluginInstanceSettings = that.options.plugins[plugin];
+                    }
+                    else {
+                        pluginInstanceSettings = {};
+                    }
+                    var pluginInstance = new OG[initClass](that);
+                    if (typeof pluginInstance.addTo == 'function') {
+                        pluginInstance.addTo(that);
+                    }
+                });
             }
         }
     }

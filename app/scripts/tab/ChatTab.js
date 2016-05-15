@@ -1,8 +1,9 @@
 OG.ChatTab = OG.Tab.extend({
 
     options: {
-        owner: 'core.chat',
+        weight: 2
     },
 
+    owner: 'core.chat',
     name: 'core.chat'
 });

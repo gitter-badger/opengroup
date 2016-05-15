@@ -104,6 +104,10 @@ gulp.task('serve', ['styles', 'scripts', 'fonts'], () => {
     port: 9000,
     server: {
       baseDir: ['.tmp', 'app'],
+      middleware: function (req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        next();
+      },
       routes: {
         '/bower_components': 'bower_components'
       }

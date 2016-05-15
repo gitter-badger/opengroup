@@ -8,5 +8,5 @@
       "scripts/tab/ManualSignalerTab.js"
     ]
   },
-  "initClass": "ManualSignalerTab"
+  "initClasses": ["ManualSignaler", "ManualSignalerTab"]
 }

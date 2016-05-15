@@ -10,5 +10,5 @@
       "scripts/tab/ChatTab.js"
     ]
   },
-  "initClass": "ChatTab"
+  "initClasses": ["ChatTab"]
 }

@@ -1,13 +1,13 @@
 <div class="og-tabs-wrapper" id="og-tabs-wrapper">
     <ul class="og-tabs-list">
         <li bind-each-tab="tabs" class="og-tabs-item" bind-data-owner="tab.options.owner" bind-on-click="tab.tabClick">
-            <div bind-class-is-active="tab.active" class="og-tabs-item-icon" bind-include="{{ tab.options.owner }}/{{ tab.options.templates.icon }}"></div>
+            <div bind-class-is-active="tab.active" class="og-tabs-item-icon" bind-include="{{ tab.owner }}/{{ tab.options.templates.icon }}"></div>
         </li>
     </ul>
 
     <ul class="og-tabs-content">
         <li bind-each-tab="tabs" class="og-tabs-content-item" bind-data-owner="tab.options.owner">
-            <div bind-class-is-active="tab.active" class="og-tabs-content-item-content" bind-include="{{ tab.options.owner }}/{{ tab.options.templates.tab }}"></div>
+            <div bind-class-is-active="tab.active" class="og-tabs-content-item-content" bind-include="{{ tab.owner }}/{{ tab.options.templates.tab }}"></div>
         </li>
     </ul>
 

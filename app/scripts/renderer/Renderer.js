@@ -15,10 +15,7 @@ OG.Renderer = OG.Evented.extend({
         OG.setOptions(this, options);
     },
 
-    // TODO do we need this kind of freedom to select where to add the html?
-    render: function (templateName, templateOwner, data, callback, selector, method) {
-
-    },
+    render: function (templateName, templateOwner, data, callback, selector, method) {},
 
     _getTemplate: function (templateName, templateOwner, callback) {
         var that = this;
@@ -29,14 +26,15 @@ OG.Renderer = OG.Evented.extend({
         }
         else {
             var templatePath;
+            var basePath = 'http://localhost:9000';
 
             // Core or core plugin templates.
             if (templateOwner == 'core' || templateOwner.substr(0, 4) == 'core') {
                 if (templateOwner == 'core') {
-                    templatePath = '/templates/core/' + templateName + '.html';
+                    templatePath = basePath + '/templates/core/' + templateName + '.html';
                 }
                 else {
-                    templatePath = '/templates/plugins/' + templateOwner + '/' + templateName + '.html';
+                    templatePath = basePath + '/templates/plugins/' + templateOwner + '/' + templateName + '.html';
                 }
             }
 
@@ -71,7 +69,6 @@ OG.Group.include({
 });
 
 OG.Group.addInitHook('renderer', function () {
-    this.on('plugins.loaded', function () {
-        this._renderer = new OG[this.options.renderer.name](this, this.options.renderer.settings);
-    });
+    this._renderer = new OG[this.options.renderer.name](this, this.options.renderer.settings);
+    this.render('header', 'core', this);
 }, 99);

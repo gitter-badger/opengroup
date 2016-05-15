@@ -1,69 +1,66 @@
 <!doctype html>
 <html class="no-js" lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>opengroup</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>opengroup</title>
 
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
 
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <!-- endbower -->
-    <!-- endbuild -->
+  <!-- build:css styles/vendor.css -->
+  <!-- bower:css -->
+  <!-- endbower -->
+  <!-- endbuild -->
 
-    <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/styles.css">
-    <!-- endbuild -->
-    
-    <!-- build:js scripts/vendor/modernizr.js -->
-    <script src="/bower_components/modernizr/modernizr.js"></script>
-    <!-- endbuild -->
-  </head>
-  <body>
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="/styles/styles.css">
+  <!-- endbuild -->
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script src="/bower_components/async/lib/async.js"></script>
-    <script src="/bower_components/sightglass/index.js"></script>
-    <script src="/bower_components/rivets/dist/rivets.js"></script>
-    <!-- endbower -->
-    <!-- endbuild -->
-    
-    <!-- build:js scripts/main.js -->
-    <script src="scripts/OpenGroup.js"></script>
-    <script src="scripts/core/Util.js"></script>
-    <script src="scripts/core/Browser.js"></script>
-    <script src="scripts/core/Class.js"></script>
-    <script src="scripts/core/Events.js"></script>
+  <!-- build:js scripts/vendor/modernizr.js -->
+  <script src="/bower_components/modernizr/modernizr.js"></script>
+  <!-- endbuild -->
+</head>
+<body>
 
-    <script src="scripts/group/Group.js"></script>
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="/bower_components/jquery/dist/jquery.js"></script>
+<script src="/bower_components/async/lib/async.js"></script>
+<script src="/bower_components/sightglass/index.js"></script>
+<script src="/bower_components/rivets/dist/rivets.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
 
-    <script src="scripts/plugin/Plugin.js"></script>
+<!-- build:js scripts/main.js -->
+<script src="/scripts/OpenGroup.js"></script>
+<script src="/scripts/core/Util.js"></script>
+<script src="/scripts/core/Browser.js"></script>
+<script src="/scripts/core/Class.js"></script>
+<script src="/scripts/core/Events.js"></script>
 
-    <script src="scripts/signaler/Signaler.js"></script>
-    <script src="scripts/peer/Peer.js"></script>
-    <script src="scripts/tab/Tab.js"></script>
+<script src="/scripts/group/Group.js"></script>
 
-    <script src="scripts/renderer/Renderer.js"></script>
-    <script src="scripts/renderer/RivetsRenderer.js"></script>
+<script src="/scripts/plugin/Plugin.js"></script>
 
-    <div id="opengroup"></div>
+<script src="/scripts/signaler/Signaler.js"></script>
+<script src="/scripts/peer/Peer.js"></script>
+<script src="/scripts/tab/Tab.js"></script>
 
-    <script>
-      OpenGroup = new OG.Group('#opengroup', {
-        plugins: ['core.signaler.manual', 'core.chat'],
-        signalers: [
-          {
-            type: 'ManualSignaler'
-          }
-        ]
-      });
-    </script>
+<script src="/scripts/renderer/Renderer.js"></script>
+<script src="/scripts/renderer/RivetsRenderer.js"></script>
+<script>
+  opengroupDefinition = {
+    title: 'Lorem ipsum group',
+    plugins: ['core.signaler.manual', 'core.chat']
+  };
 
-    <!-- endbuild -->
-  </body>
+  OpenGroup = new OG.Group(opengroupDefinition);
+</script>
+<script>
+
+</script>
+<!-- endbuild -->
+</body>
 </html>

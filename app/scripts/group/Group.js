@@ -20,10 +20,10 @@ OG.Group = OG.Evented.extend({
 
     pluginDefinitions: [],
 
-    initialize: function (id, options) { // (HTMLElement or String, Object)
-        $(id).addClass('opengroup-processed')
+    initialize: function (options) { // (HTMLElement or String, Object)
+        $('body').append('<div id="opengroup"></div>');
         OG.Util.stamp(this);
-        this.selector = id;
+        this.selector = '#opengroup';
         OG.setOptions(this, options);
     },
 

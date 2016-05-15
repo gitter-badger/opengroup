@@ -3,7 +3,6 @@ OG.RivetsRenderer = OG.Renderer.extend({
     options: {
     },
 
-    // TODO do we need this kind of freedom to select where to add the html?
     render: function (templateName, templateOwner, data, callback, selector, method) {
         if (!data) { data = []; }
         if (!method) { method = 'append' }
