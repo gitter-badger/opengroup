@@ -19,7 +19,7 @@ OG.RivetsRenderer = OG.Renderer.extend({
         });
     },
     getPropertyByDotNotation: function (obj, desc) {
-        var arr = desc.split(".");
+        var arr = desc.split('.');
         while (arr.length && (obj = obj[arr.shift()]));
         return obj;
     }
